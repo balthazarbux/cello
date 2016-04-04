@@ -7,7 +7,8 @@ from ucf_writer import (
     gates_from_csv,
     parts_from_csv,
     gate_parts_from_csv,
-    response_functions_from_csv
+    response_functions_from_csv,
+    eugene_rules
 )
 
 
@@ -295,6 +296,16 @@ class TestUCFWriterMethods(unittest.TestCase):
 
         response_functions = response_functions_from_csv(table, header_map)
         self.assertEqual(response_functions, expected_response_functions)
+
+    def test_eugene_rules_returns_expected_value(self):
+        expected_eugene_rules = {
+            'collection': 'eugene_rules',
+            'eugene_part_rules': ['STARTSWITH foo'],
+            'eugene_gate_rules': ['ALL_FORWARD']
+        }
+        roadblock_promoters = ['foo']
+        rules = eugene_rules(roadblock_promoters)
+        self.assertEqual(rules, expected_eugene_rules)
 
 if __name__ == '__main__':
     unittest.main()
