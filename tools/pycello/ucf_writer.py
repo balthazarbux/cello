@@ -19,43 +19,13 @@ def gates_from_csv(table, header_map):
 def parts_from_csv(table, header_map):
     parts = []
     for row in table:
-
-        ribozyme = {}
-        ribozyme["collection"] = "parts"
-        ribozyme["type"] = "ribozyme"
-        ribozyme["name"] = row[header_map["ribozyme"]]
-        ribozyme["dnasequence"] = row[header_map["ribozymeDNA"]]
-
-        rbs = {}
-        rbs["collection"] = "parts"
-        rbs["type"] = "rbs"
-        rbs["name"] = row[header_map["rbs"]]
-        rbs["dnasequence"] = row[header_map["rbsDNA"]]
-
-        cds = {}
-        cds["collection"] = "parts"
-        cds["type"] = "cds"
-        cds["name"] = row[header_map["cds"]]
-        cds["dnasequence"] = row[header_map["cdsDNA"]]
-
-        terminator = {}
-        terminator["collection"] = "parts"
-        terminator["type"] = "terminator"
-        terminator["name"] = row[header_map["terminator"]]
-        terminator["dnasequence"] = row[header_map["terminatorDNA"]]
-
-        promoter = {}
-        promoter["collection"] = "parts"
-        promoter["type"] = "promoter"
-        promoter["name"] = row[header_map["promoter"]]
-        promoter["dnasequence"] = row[header_map["promoterDNA"]]
-
-        parts.append(ribozyme)
-        parts.append(rbs)
-        parts.append(cds)
-        parts.append(terminator)
-        parts.append(promoter)
-
+        for part in ['ribozyme', 'rbs', 'cds', 'terminator', 'promoter']:
+            parts.append({
+                'collection': 'parts',
+                'type': part,
+                'name': row[header_map[part]],
+                'dnasequence': row[header_map[part + 'DNA']]
+            })
     return parts
 
 
