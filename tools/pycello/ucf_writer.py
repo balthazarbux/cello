@@ -60,24 +60,13 @@ def response_functions_from_csv(table, header_map):
                 'on_threshold': row[header_map["IH"]]
             }
         ],
-        'parameters': [
-            {
-                'name': 'ymax',
-                'value': row[header_map["ymax"]]
+        'parameters': map(
+            lambda n: {
+                'name': n,
+                'value': row[header_map[n]]
             },
-            {
-                'name': 'ymin',
-                'value': row[header_map["ymin"]]
-            },
-            {
-                'name': 'K',
-                'value': row[header_map["K"]]
-            },
-            {
-                'name': 'n',
-                'value': row[header_map["n"]]
-            },
-        ]
+            ['ymax', 'ymin', 'K', 'n']
+        )
     }, table)
 
 
