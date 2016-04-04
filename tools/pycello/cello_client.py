@@ -1,9 +1,12 @@
-import requests
 import json
 import os
-import click
-from requests.auth import HTTPBasicAuth
+
 from Bio import SeqIO
+
+import click
+
+import requests
+from requests.auth import HTTPBasicAuth
 
 
 class CtxObject(object):
@@ -17,7 +20,7 @@ class CtxObject(object):
 
 
 def result(r):
-    click.echo(click.style(str(r.status_code), fg='green' ))
+    click.echo(click.style(str(r.status_code), fg='green'))
     try:
         arr = json.loads(r.text)
         click.echo(json.dumps(arr, indent=4))
@@ -25,13 +28,12 @@ def result(r):
         click.echo(r.text)
 
 
-@click.group() 
+@click.group()
 @click.version_option()
 @click.pass_context
 def cli(ctx):
     """Command-line interface for Cello genetic circuit design"""
     ctx.obj = CtxObject()
-
 
 
 @cli.command()
@@ -42,12 +44,12 @@ def cli(ctx):
 @click.pass_context
 def get_results(ctx, jobid, keyword, extension, filename):
 
-    if jobid == None:
+    if jobid is None:
         endpoint = ctx.obj.url_root + "/results"
         r = requests.get(endpoint, auth=ctx.obj.auth)
         result(r)
 
-    elif jobid != None and filename == None:
+    elif jobid is not None and filename is None:
         params = {}
         if keyword:
             params['keyword'] = keyword
@@ -58,11 +60,10 @@ def get_results(ctx, jobid, keyword, extension, filename):
         r = requests.get(endpoint, params=params, auth=ctx.obj.auth)
         result(r)
 
-    elif jobid != None and filename != None:
+    elif jobid is not None and filename is not None:
         endpoint = ctx.obj.url_root + "/results/" + jobid + "/" + filename
         r = requests.get(endpoint, auth=ctx.obj.auth)
         result(r)
-
 
 
 @cli.command()
@@ -89,7 +90,7 @@ def get_inputs(ctx, name):
 @click.pass_context
 @click.option('--name', type=click.STRING, help='output name.')
 def get_outputs(ctx, name):
-    
+
     if name:
         filename = "output_" + name + ".txt"
         endpoint = ctx.obj.url_root + "/in_out/" + filename
@@ -142,7 +143,7 @@ def delete_input(ctx, name):
     filename = "input_" + name + ".txt"
     endpoint = ctx.obj.url_root + "/in_out/" + filename
     r = requests.delete(endpoint, auth=ctx.obj.auth)
-    result(r)    
+    result(r)
 
 
 @cli.command()
@@ -155,8 +156,6 @@ def delete_output(ctx, name):
     result(r)
 
 
-
-
 @cli.command()
 @click.option('--verilog', type=click.Path(exists=True), required=True, help='verilog file path.')
 @click.pass_context
@@ -165,7 +164,7 @@ def netsynth(ctx, verilog):
     verilog_text = open(verilog, 'r').read()
 
     params = {}
-    params['verilog_text'] = verilog_text 
+    params['verilog_text'] = verilog_text
 
     r = requests.post(endpoint, params=params, auth=ctx.obj.auth)
     result(r)
@@ -185,7 +184,6 @@ def submit(ctx, jobid, verilog, inputs, outputs, options):
     inputs_text = open(inputs, 'r').read()
     outputs_text = open(outputs, 'r').read()
     verilog_text = open(verilog, 'r').read()
-
 
     params = {}
     params['id'] = jobid
@@ -218,7 +216,7 @@ def show_parts(ctx, jobid, assignment):
     r = requests.get(endpoint, params=params, auth=ctx.obj.auth)
     if r.status_code is 200:
         filenames = json.loads(r.text)
-        
+
         for filename in filenames:
             endpoint = ctx.obj.url_root + "/results/" + jobid + "/" + filename
             r = requests.get(endpoint, auth=ctx.obj.auth)
@@ -229,7 +227,6 @@ def show_parts(ctx, jobid, assignment):
             parts = parts.replace(', ', '\", \"')
             parts = json.loads(parts)
             click.echo(json.dumps(parts, indent=4))
-
 
 
 @click.pass_context
@@ -244,12 +241,11 @@ def show_files_contents(ctx, jobid, assignment, extension):
 
     params['extension'] = extension
 
-
     endpoint = ctx.obj.url_root + "/results/" + jobid
     r = requests.get(endpoint, params=params, auth=ctx.obj.auth)
     if r.status_code is 200:
         filenames = json.loads(r.text)
-        
+
         for filename in filenames:
             endpoint = ctx.obj.url_root + "/results/" + jobid + "/" + filename
             r = requests.get(endpoint, auth=ctx.obj.auth)
@@ -263,7 +259,6 @@ def show_files_contents(ctx, jobid, assignment, extension):
 @click.pass_context
 def show_circuit_info(ctx, jobid, assignment):
     ctx.invoke(show_files_contents, jobid=jobid, assignment=assignment, extension='logic_circuit.txt')
-
 
 
 @cli.command()
@@ -284,8 +279,8 @@ def read_genbank(ctx, jobid, filename, seq):
     r = requests.get(ctx.obj.url_root + "/resultsroot", auth=ctx.obj.auth)
     server_root = r.text
     filepath = server_root + "/" + ctx.obj.username + "/" + jobid + "/" + filename
-    
-    gb_record = SeqIO.read(open(filepath,"r"), "genbank")
+
+    gb_record = SeqIO.read(open(filepath, "r"), "genbank")
 
     if seq:
         for gb_feature in gb_record.features:
@@ -346,4 +341,3 @@ def delete_ucf(ctx, name):
 
 if __name__ == '__main__':
     cli()
-

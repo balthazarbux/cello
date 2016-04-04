@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-
 import csv
-import sys
 import json
-
+import sys
 
 
 def gates_from_csv(table, header_map):
@@ -17,7 +15,7 @@ def gates_from_csv(table, header_map):
         obj["gate_name"] = row[header_map["name"]]
         obj["gate_type"] = row[header_map["type"]]
         obj["system"] = "TetR"
-        obj["color_hexcode"] = "000000" # for images
+        obj["color_hexcode"] = "000000"  # for images
         gates.append(obj)
 
     return gates
@@ -51,7 +49,6 @@ def parts_from_csv(table, header_map):
         terminator["type"] = "terminator"
         terminator["name"] = row[header_map["terminator"]]
         terminator["dnasequence"] = row[header_map["terminatorDNA"]]
-
 
         promoter = {}
         promoter["collection"] = "parts"
@@ -94,7 +91,7 @@ def gate_parts_from_csv(table, header_map):
         obj["promoter"] = row[header_map["promoter"]]
 
         gate_parts.append(obj)
-    
+
     return gate_parts
 
 
@@ -165,7 +162,7 @@ def eugene_rules(roadblock_promoters):
 
     for promoter_name in roadblock_promoters:
         eugene_rules["eugene_part_rules"].append("STARTSWITH " + promoter_name)
-        
+
 
     return eugene_rules
 
@@ -231,7 +228,7 @@ def writeUCF(table, header_map):
 
 
     roadblock_promoters = []
-    roadblock_promoters.append("pTac")    
+    roadblock_promoters.append("pTac")
     roadblock_promoters.append("pBAD")
     roadblock_promoters.append("pPhlF")
     roadblock_promoters.append("pSrpR")
@@ -259,14 +256,14 @@ def writeUCF(table, header_map):
 
 
 if __name__ == '__main__':
-    
+
     if len(sys.argv) < 2:
         print "Example usage:"
 
         print ''
         print 'Step 1: write UCF'
         print 'python ucf_writer.py  ../../resources/csv_gate_libraries/gates_Eco1C1G1T1.csv > myName.UCF.json'
-        
+
         print '\n\n'
         print 'Step 2: post UCF'
         print 'cello post_ucf --name myName.UCF.json --filepath myName.UCF.json'
@@ -294,7 +291,7 @@ if __name__ == '__main__':
 
     csvpath = sys.argv[1]
 
-        
+
 
     with open(csvpath) as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
@@ -317,6 +314,3 @@ if __name__ == '__main__':
 
 
         writeUCF(table, header_map)
-
-    
-
