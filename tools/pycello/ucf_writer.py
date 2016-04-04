@@ -32,28 +32,22 @@ def parts_from_csv(table, header_map):
 def gate_parts_from_csv(table, header_map):
     gate_parts = []
     for row in table:
-
-        gate_name = row[header_map["name"]]
-
-        cassette_part_names = []
-        cassette_part_names.append(row[header_map["ribozyme"]])
-        cassette_part_names.append(row[header_map["rbs"]])
-        cassette_part_names.append(row[header_map["cds"]])
-        cassette_part_names.append(row[header_map["terminator"]])
-
-        expression_cassettes = []
-        cassette = {}
-        cassette["maps_to_variable"] = "x"
-        cassette["cassette_parts"] = cassette_part_names
-        expression_cassettes.append(cassette)
-
-        obj = {}
-        obj["collection"] = "gate_parts"
-        obj["gate_name"] = gate_name
-        obj["expression_cassettes"] = expression_cassettes
-        obj["promoter"] = row[header_map["promoter"]]
-
-        gate_parts.append(obj)
+        gate_parts.append({
+            'collection': 'gate_parts',
+            'gate_name': row[header_map["name"]],
+            'expression_cassettes': [
+                {
+                    'maps_to_variable': 'x',
+                    'cassette_parts': [
+                        row[header_map["ribozyme"]],
+                        row[header_map["rbs"]],
+                        row[header_map["cds"]],
+                        row[header_map["terminator"]]
+                    ]
+                }
+            ],
+            'promoter': row[header_map["promoter"]]
+        })
 
     return gate_parts
 
