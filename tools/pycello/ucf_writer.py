@@ -5,7 +5,6 @@ import sys
 
 
 def gates_from_csv(table, header_map):
-
     gates = []
     for row in table:
         obj = {}
@@ -22,7 +21,6 @@ def gates_from_csv(table, header_map):
 
 
 def parts_from_csv(table, header_map):
-
     parts = []
     for row in table:
 
@@ -66,7 +64,6 @@ def parts_from_csv(table, header_map):
 
 
 def gate_parts_from_csv(table, header_map):
-
     gate_parts = []
     for row in table:
 

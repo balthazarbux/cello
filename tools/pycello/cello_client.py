@@ -43,7 +43,6 @@ def cli(ctx):
 @click.option('--filename', type=click.STRING, help='file name.')
 @click.pass_context
 def get_results(ctx, jobid, keyword, extension, filename):
-
     if jobid is None:
         endpoint = ctx.obj.url_root + "/results"
         r = requests.get(endpoint, auth=ctx.obj.auth)
@@ -70,7 +69,6 @@ def get_results(ctx, jobid, keyword, extension, filename):
 @click.option('--name', type=click.STRING, help='promoter name.')
 @click.pass_context
 def get_inputs(ctx, name):
-
     if name:
         filename = "input_" + name + ".txt"
         endpoint = ctx.obj.url_root + "/in_out/" + filename
@@ -90,7 +88,6 @@ def get_inputs(ctx, name):
 @click.pass_context
 @click.option('--name', type=click.STRING, help='output name.')
 def get_outputs(ctx, name):
-
     if name:
         filename = "output_" + name + ".txt"
         endpoint = ctx.obj.url_root + "/in_out/" + filename
@@ -178,7 +175,6 @@ def netsynth(ctx, verilog):
 @click.option('--options', type=click.STRING, help='additional dash-separated options.')
 @click.pass_context
 def submit(ctx, jobid, verilog, inputs, outputs, options):
-
     endpoint = ctx.obj.url_root + "/submit"
 
     inputs_text = open(inputs, 'r').read()
@@ -201,7 +197,6 @@ def submit(ctx, jobid, verilog, inputs, outputs, options):
 @click.option('--assignment', type=click.STRING, help='e.g. A000')
 @click.pass_context
 def show_parts(ctx, jobid, assignment):
-
     params = {}
     if assignment:
         if len(assignment) is not 4 or not assignment.startswith('A'):
@@ -275,7 +270,6 @@ def show_reu_table(ctx, jobid, assignment):
 @click.option('--seq', is_flag=True, help='also print the dna sequence')
 @click.pass_context
 def read_genbank(ctx, jobid, filename, seq):
-
     r = requests.get(ctx.obj.url_root + "/resultsroot", auth=ctx.obj.auth)
     server_root = r.text
     filepath = server_root + "/" + ctx.obj.username + "/" + jobid + "/" + filename
@@ -295,7 +289,6 @@ def read_genbank(ctx, jobid, filename, seq):
 @click.option('--filepath', type=click.Path(exists=True), required=True, help='UCF file.')
 @click.pass_context
 def post_ucf(ctx, name, filepath):
-
     if not name.endswith(".UCF.json"):
         click.echo("UCF file name must end with the extension .UCF.json")
         return
@@ -315,7 +308,6 @@ def post_ucf(ctx, name, filepath):
 @click.option('--name', type=click.STRING, required=True, help='UCF name')
 @click.pass_context
 def validate_ucf(ctx, name):
-
     if not name.endswith(".UCF.json"):
         click.echo("UCF file name must end with the extension .UCF.json")
         return
@@ -329,7 +321,6 @@ def validate_ucf(ctx, name):
 @click.option('--name', type=click.STRING, required=True, help='UCF name')
 @click.pass_context
 def delete_ucf(ctx, name):
-
     if not name.endswith(".UCF.json"):
         click.echo("UCF file name must end with the extension .UCF.json")
         return
