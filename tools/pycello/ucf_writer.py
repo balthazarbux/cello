@@ -30,80 +30,55 @@ def parts_from_csv(table, header_map):
 
 
 def gate_parts_from_csv(table, header_map):
-    gate_parts = []
-    for row in table:
-        gate_parts.append({
-            'collection': 'gate_parts',
-            'gate_name': row[header_map["name"]],
-            'expression_cassettes': [
-                {
-                    'maps_to_variable': 'x',
-                    'cassette_parts': [
-                        row[header_map["ribozyme"]],
-                        row[header_map["rbs"]],
-                        row[header_map["cds"]],
-                        row[header_map["terminator"]]
-                    ]
-                }
-            ],
-            'promoter': row[header_map["promoter"]]
-        })
-
-    return gate_parts
+    return map(lambda row: {
+        'collection': 'gate_parts',
+        'gate_name': row[header_map["name"]],
+        'expression_cassettes': [
+            {
+                'maps_to_variable': 'x',
+                'cassette_parts': [
+                    row[header_map["ribozyme"]],
+                    row[header_map["rbs"]],
+                    row[header_map["cds"]],
+                    row[header_map["terminator"]]
+                ]
+            }
+        ],
+        'promoter': row[header_map["promoter"]]
+    }, table)
 
 
 def response_functions_from_csv(table, header_map):
-    response_functions = []
-    for row in table:
-
-        obj = {}
-        obj["collection"] = "response_functions"
-
-        gate_name = row[header_map["name"]]
-        equation = row[header_map["equation"]]
-
-        ymax = row[header_map["ymax"]]
-        ymin = row[header_map["ymin"]]
-        k = row[header_map["K"]]
-        n = row[header_map["n"]]
-        il = row[header_map["IL"]]
-        ih = row[header_map["IH"]]
-
-        map_ymax = {}
-        map_ymin = {}
-        map_k = {}
-        map_n = {}
-
-        map_ymax["name"] = "ymax"
-        map_ymax["value"] = ymax
-        map_ymin["name"] = "ymin"
-        map_ymin["value"] = ymin
-        map_k["name"] = "K"
-        map_k["value"] = k
-        map_n["name"] = "n"
-        map_n["value"] = n
-
-        parameters = []
-        parameters.append(map_ymax)
-        parameters.append(map_ymin)
-        parameters.append(map_k)
-        parameters.append(map_n)
-
-        variables = []
-        map_var = {}
-        map_var["name"] = "x"
-        map_var["off_threshold"] = il
-        map_var["on_threshold"] = ih
-        variables.append(map_var)
-
-        obj["gate_name"] = gate_name
-        obj["equation"] = equation
-        obj["variables"] = variables
-        obj["parameters"] = parameters
-
-        response_functions.append(obj)
-
-    return response_functions
+    return map(lambda row: {
+        'collection': 'response_functions',
+        'gate_name': row[header_map["name"]],
+        'equation': row[header_map["equation"]],
+        'variables': [
+            {
+                'name': 'x',
+                'off_threshold': row[header_map["IL"]],
+                'on_threshold': row[header_map["IH"]]
+            }
+        ],
+        'parameters': [
+            {
+                'name': 'ymax',
+                'value': row[header_map["ymax"]]
+            },
+            {
+                'name': 'ymin',
+                'value': row[header_map["ymin"]]
+            },
+            {
+                'name': 'K',
+                'value': row[header_map["K"]]
+            },
+            {
+                'name': 'n',
+                'value': row[header_map["n"]]
+            },
+        ]
+    }, table)
 
 
 def eugene_rules(roadblock_promoters):
