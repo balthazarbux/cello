@@ -107,40 +107,37 @@ def response_functions_from_csv(table, header_map):
 
         ymax = row[header_map["ymax"]]
         ymin = row[header_map["ymin"]]
-        K    = row[header_map["K"]]
-        n    = row[header_map["n"]]
-        IL   = row[header_map["IL"]]
-        IH   = row[header_map["IH"]]
+        k = row[header_map["K"]]
+        n = row[header_map["n"]]
+        il = row[header_map["IL"]]
+        ih = row[header_map["IH"]]
 
         map_ymax = {}
         map_ymin = {}
-        map_K = {}
+        map_k = {}
         map_n = {}
 
         map_ymax["name"] = "ymax"
         map_ymax["value"] = ymax
         map_ymin["name"] = "ymin"
         map_ymin["value"] = ymin
-        map_K["name"] = "K"
-        map_K["value"] = K
+        map_k["name"] = "K"
+        map_k["value"] = k
         map_n["name"] = "n"
         map_n["value"] = n
-
 
         parameters = []
         parameters.append(map_ymax)
         parameters.append(map_ymin)
-        parameters.append(map_K)
+        parameters.append(map_k)
         parameters.append(map_n)
-
 
         variables = []
         map_var = {}
         map_var["name"] = "x"
-        map_var["off_threshold"] = IL
-        map_var["on_threshold"] =  IH
+        map_var["off_threshold"] = il
+        map_var["on_threshold"] = ih
         variables.append(map_var)
-
 
         obj["gate_name"] = gate_name
         obj["equation"] = equation
@@ -163,13 +160,10 @@ def eugene_rules(roadblock_promoters):
     for promoter_name in roadblock_promoters:
         eugene_rules["eugene_part_rules"].append("STARTSWITH " + promoter_name)
 
-
     return eugene_rules
 
 
-def writeUCF(table, header_map):
-
-
+def write_ucf(table, header_map):
     # description only, values not parsed
     header = {}
     header["collection"] = "header"
@@ -205,7 +199,6 @@ def writeUCF(table, header_map):
     logic_constraints["collection"] = "logic_constraints"
     logic_constraints["available_gates"] = gate_type_constraints
 
-
     # For Netsynth motif swapping
     motif_library = []
     output_or = {}
@@ -216,8 +209,6 @@ def writeUCF(table, header_map):
     output_or["netlist"].append("OUTPUT_OR(y,a,b)")
     motif_library.append(output_or)
 
-
-
     gates = gates_from_csv(table, header_map)
 
     response_functions = response_functions_from_csv(table, header_map)
@@ -225,7 +216,6 @@ def writeUCF(table, header_map):
     gate_parts = gate_parts_from_csv(table, header_map)
 
     parts = parts_from_csv(table, header_map)
-
 
     roadblock_promoters = []
     roadblock_promoters.append("pTac")
@@ -236,8 +226,6 @@ def writeUCF(table, header_map):
     roadblock_promoters.append("pQacR")
 
     eugene = eugene_rules(roadblock_promoters)
-
-
 
     ucf = []
     ucf.append(header)
@@ -253,10 +241,7 @@ def writeUCF(table, header_map):
     print json.dumps(ucf, indent=2)
 
 
-
-
 if __name__ == '__main__':
-
     if len(sys.argv) < 2:
         print "Example usage:"
 
@@ -288,10 +273,7 @@ if __name__ == '__main__':
         print '\n\n'
         sys.exit()
 
-
     csvpath = sys.argv[1]
-
-
 
     with open(csvpath) as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
@@ -302,7 +284,7 @@ if __name__ == '__main__':
         i = 0
         for col in headers:
             header_map[col] = i
-            i = i+1
+            i = i + 1
 
         # Table
         table = []
@@ -312,5 +294,4 @@ if __name__ == '__main__':
                 values.append(col)
             table.append(row)
 
-
-        writeUCF(table, header_map)
+        write_ucf(table, header_map)
