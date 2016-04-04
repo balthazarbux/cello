@@ -5,19 +5,15 @@ import sys
 
 
 def gates_from_csv(table, header_map):
-    gates = []
-    for row in table:
-        obj = {}
-        obj["collection"] = "gates"
-        obj["regulator"] = row[header_map["cds"]]
-        obj["group_name"] = row[header_map["cds"]]
-        obj["gate_name"] = row[header_map["name"]]
-        obj["gate_type"] = row[header_map["type"]]
-        obj["system"] = "TetR"
-        obj["color_hexcode"] = "000000"  # for images
-        gates.append(obj)
-
-    return gates
+    return map(lambda row: {
+        'collection': 'gates',
+        'regulator': row[header_map['cds']],
+        'group_name': row[header_map['cds']],
+        'gate_name': row[header_map['name']],
+        'gate_type': row[header_map['type']],
+        'system': 'TetR',
+        'color_hexcode': '000000'
+    }, table)
 
 
 def parts_from_csv(table, header_map):
