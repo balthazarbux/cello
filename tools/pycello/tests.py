@@ -1,10 +1,16 @@
+#!/usr/bin/env python
+"""Tests for UCF Writer methods."""
+
 import unittest
 
-from ucf_writer import gates_from_csv, parts_from_csv
+from ucf_writer import gates_from_csv, parts_from_csv, gate_parts_from_csv
 
 
 class TestUCFWriterMethods(unittest.TestCase):
+    """TestCase for UCF writer methods."""
+
     def test_gates_from_csv_returns_expected_value(self):
+        """Test that gates_from_csv returns expected value."""
         expected_gates = [
             {
                 'collection': 'gates',
@@ -50,6 +56,7 @@ class TestUCFWriterMethods(unittest.TestCase):
         self.assertEqual(gates, expected_gates)
 
     def test_parts_from_csv_returns_expected_value(self):
+        """Testparts_from_csv returns the expected value."""
         expected_parts = [
             {
                 'collection': 'parts',
@@ -114,6 +121,74 @@ class TestUCFWriterMethods(unittest.TestCase):
         parts = parts_from_csv(table, header_map)
 
         self.assertEqual(parts, expected_parts)
+
+    def test_gate_parts_from_csv_returns_expected_value(self):
+        """Test gate_parts_from_csv returns the expected value."""
+        expected_gate_parts = [
+            {
+                'collection': 'gate_parts',
+                'gate_name': 'zxcvzxcv',
+                'expression_cassettes': [
+                    {
+                        'maps_to_variable': 'x',
+                        'cassette_parts': [
+                            '2',
+                            '3',
+                            '4',
+                            '5'
+                        ]
+                    }
+                ],
+                'promoter': '6'
+            },
+            {
+                'collection': 'gate_parts',
+                'gate_name': 'ppppp',
+                'expression_cassettes': [
+                    {
+                        'maps_to_variable': 'x',
+                        'cassette_parts': [
+                            '0',
+                            '00',
+                            '000',
+                            '0000'
+                        ]
+                    }
+                ],
+                'promoter': '00000'
+            }
+        ]
+
+        table = [
+            {
+                'foo': 'zxcvzxcv',
+                'asdf': '2',
+                'q': '3',
+                'w': '4',
+                'e': '5',
+                'r': '6'
+            },
+            {
+                'foo': 'ppppp',
+                'asdf': '0',
+                'q': '00',
+                'w': '000',
+                'e': '0000',
+                'r': '00000'
+            }
+        ]
+
+        header_map = {
+            'name': 'foo',
+            'ribozyme': 'asdf',
+            'rbs': 'q',
+            'cds': 'w',
+            'terminator': 'e',
+            'promoter': 'r'
+        }
+
+        parts = gate_parts_from_csv(table, header_map)
+        self.assertEqual(parts, expected_gate_parts)
 
 if __name__ == '__main__':
     unittest.main()
