@@ -3,7 +3,12 @@
 
 import unittest
 
-from ucf_writer import gates_from_csv, parts_from_csv, gate_parts_from_csv
+from ucf_writer import (
+    gates_from_csv,
+    parts_from_csv,
+    gate_parts_from_csv,
+    response_functions_from_csv
+)
 
 
 class TestUCFWriterMethods(unittest.TestCase):
@@ -189,6 +194,107 @@ class TestUCFWriterMethods(unittest.TestCase):
 
         parts = gate_parts_from_csv(table, header_map)
         self.assertEqual(parts, expected_gate_parts)
+
+    def test_response_functions_from_csv_returns_expected_value(self):
+        expected_response_functions = [
+            {
+                'collection': 'response_functions',
+                'gate_name': '0',
+                'equation': '00',
+                'variables': [
+                    {
+                        'name': 'x',
+                        'off_threshold': '0000000',
+                        'on_threshold': '00000000'
+                    }
+                ],
+                'parameters': [
+                    {
+                        'name': 'ymax',
+                        'value': '000'
+                    },
+                    {
+                        'name': 'ymin',
+                        'value': '0000'
+                    },
+                    {
+                        'name': 'K',
+                        'value': '00000'
+                    },
+                    {
+                        'name': 'n',
+                        'value': '000000'
+                    },
+                ]
+            },
+            {
+                'collection': 'response_functions',
+                'gate_name': '1',
+                'equation': '11',
+                'variables': [
+                    {
+                        'name': 'x',
+                        'off_threshold': '1111111',
+                        'on_threshold': '11111111'
+                    }
+                ],
+                'parameters': [
+                    {
+                        'name': 'ymax',
+                        'value': '111'
+                    },
+                    {
+                        'name': 'ymin',
+                        'value': '1111'
+                    },
+                    {
+                        'name': 'K',
+                        'value': '11111'
+                    },
+                    {
+                        'name': 'n',
+                        'value': '111111'
+                    },
+                ]
+            }
+        ]
+
+        header_map = {
+            'name': 'a',
+            'equation': 'b',
+            'ymax': 'c',
+            'ymin': 'd',
+            'K': 'e',
+            'n': 'f',
+            'IL': 'g',
+            'IH': 'h'
+        }
+
+        table = [
+            {
+                'a': '0',
+                'b': '00',
+                'c': '000',
+                'd': '0000',
+                'e': '00000',
+                'f': '000000',
+                'g': '0000000',
+                'h': '00000000'
+            },
+            {
+                'a': '1',
+                'b': '11',
+                'c': '111',
+                'd': '1111',
+                'e': '11111',
+                'f': '111111',
+                'g': '1111111',
+                'h': '11111111'
+            }
+        ]
+
+        response_functions = response_functions_from_csv(table, header_map)
+        self.assertEqual(response_functions, expected_response_functions)
 
 if __name__ == '__main__':
     unittest.main()
