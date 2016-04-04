@@ -215,7 +215,6 @@ def show_parts(ctx, jobid, assignment):
         for filename in filenames:
             endpoint = ctx.obj.url_root + "/results/" + jobid + "/" + filename
             r = requests.get(endpoint, auth=ctx.obj.auth)
-            name = r.text.split('[')[0]
             parts = '[' + r.text.split('[')[1]
             parts = parts.replace('[', '[\"')
             parts = parts.replace(']', '\"]')
