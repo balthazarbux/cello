@@ -82,17 +82,13 @@ def response_functions_from_csv(table, header_map):
 
 
 def eugene_rules(roadblock_promoters):
-    eugene_rules = {}
-    eugene_rules["collection"] = "eugene_rules"
-    eugene_rules["eugene_part_rules"] = []
-    eugene_rules["eugene_gate_rules"] = []
-
-    eugene_rules["eugene_gate_rules"].append("ALL_FORWARD")
-
-    for promoter_name in roadblock_promoters:
-        eugene_rules["eugene_part_rules"].append("STARTSWITH " + promoter_name)
-
-    return eugene_rules
+    return {
+        'collection': 'eugene_rules',
+        'eugene_part_rules': map(
+            lambda name: "STARTSWITH %s" % name, roadblock_promoters
+        ),
+        'eugene_gate_rules': ['ALL_FORWARD']
+    }
 
 
 def write_ucf(table, header_map):
