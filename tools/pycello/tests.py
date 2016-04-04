@@ -197,6 +197,7 @@ class TestUCFWriterMethods(unittest.TestCase):
         self.assertEqual(parts, expected_gate_parts)
 
     def test_response_functions_from_csv_returns_expected_value(self):
+        """Test for response_functions_from_csv."""
         expected_response_functions = [
             {
                 'collection': 'response_functions',
@@ -298,6 +299,7 @@ class TestUCFWriterMethods(unittest.TestCase):
         self.assertEqual(response_functions, expected_response_functions)
 
     def test_eugene_rules_returns_expected_value(self):
+        """Test for eugene_rules."""
         expected_eugene_rules = {
             'collection': 'eugene_rules',
             'eugene_part_rules': ['STARTSWITH foo'],
