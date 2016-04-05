@@ -82,78 +82,79 @@ def eugene_rules(roadblock_promoters):
 
 def write_ucf(table, header_map):
     # description only, values not parsed
-    header = {}
-    header["collection"] = "header"
-    header["description"] = "placeholder"
-    header["version"] = "placeholder"
-    header["date"] = "placeholder"
-    header["author"] = ["author1"]
-    header["organism"] = "Escherichia coli NEB 10-beta"
-    header["genome"] = "placeholder"
-    header["media"] = "placeholder"
-    header["temperature"] = "37"
-    header["growth"] = "placeholder"
+    header = {
+        'collection': 'header',
+        'description': 'placeholder',
+        'version': 'placeholder',
+        'date': 'placeholder',
+        'author': ['author1'],
+        'organism': 'Escherichia coli NEB 10-beta',
+        'genome': 'placeholder',
+        'media': 'placeholder',
+        'temperature': '37',
+        'growth': 'placeholder',
+    }
 
     # description only, values not parsed
-    measurement_std = {}
-    measurement_std["collection"] = "measurement_std"
-    measurement_std["signal_carrier_units"] = "REU"
-    measurement_std["normalization_instructions"] = "placeholder"
-    measurement_std["plasmid_description"] = "placeholder"
-    measurement_std["plasmid_sequence"] = "placeholder"
+    measurement_std = {
+        'collection': 'measurement_std',
+        'signal_carrier_units': 'REU',
+        'normalization_instructions': 'placeholder',
+        'plasmid_description': 'placeholder',
+        'plasmid_sequence': 'placeholder',
+    }
 
     # Not used
-    logic_constraints = {}
-    nor = {}
-    nor["type"] = "NOR"
-    nor["max_instances"] = 10
-    outor = {}
-    outor["type"] = "OUTPUT_OR"
-    outor["max_instances"] = 3
-    gate_type_constraints = []
-    gate_type_constraints.append(nor)
-    gate_type_constraints.append(outor)
-    logic_constraints["collection"] = "logic_constraints"
-    logic_constraints["available_gates"] = gate_type_constraints
+    nor = {
+        'type': 'NOR',
+        'max_instances': 10,
+    }
+    outor = {
+        'type': 'OUTPUT_OR',
+        'max_instances': 3,
+    }
+    gate_type_constraints = [nor, outor]
+    logic_constraints = {
+        'collection': 'logic_constraints',
+        'available_gates': gate_type_constraints,
+    }
 
     # For Netsynth motif swapping
-    motif_library = []
-    output_or = {}
-    output_or["collection"] = "motif_library"
-    output_or["inputs"] = ["a", "b"]
-    output_or["outputs"] = ["y"]
-    output_or["netlist"] = []
-    output_or["netlist"].append("OUTPUT_OR(y,a,b)")
-    motif_library.append(output_or)
+    output_or = {
+        'collection': 'motif_library',
+        'inputs': ['a', 'b'],
+        'outputs': ['y'],
+        'netlist': ["OUTPUT_OR(y,a,b)"],
+    }
+    motif_library = [output_or]
 
     gates = gates_from_csv(table, header_map)
-
     response_functions = response_functions_from_csv(table, header_map)
-
     gate_parts = gate_parts_from_csv(table, header_map)
-
     parts = parts_from_csv(table, header_map)
 
-    roadblock_promoters = []
-    roadblock_promoters.append("pTac")
-    roadblock_promoters.append("pBAD")
-    roadblock_promoters.append("pPhlF")
-    roadblock_promoters.append("pSrpR")
-    roadblock_promoters.append("pBM3R1")
-    roadblock_promoters.append("pQacR")
+    roadblock_promoters = (
+        'pTac',
+        'pBAD',
+        'pPhlF',
+        'pSrpR',
+        'pBM3R1',
+        'pQacR',
+    )
 
     eugene = eugene_rules(roadblock_promoters)
 
-    ucf = []
-    ucf.append(header)
-    ucf.append(measurement_std)
-    ucf.append(logic_constraints)
-    ucf.extend(motif_library)
-    ucf.extend(gates)
-    ucf.extend(response_functions)
-    ucf.extend(gate_parts)
-    ucf.extend(parts)
-    ucf.append(eugene)
+    ucf = (
+        header,
+        measurement_std,
+        logic_constraints,
+        motif_library,
+        gates,
+        response_functions,
+        gate_parts,
+        parts,
+        eugene,
+    )
 
     print json.dumps(ucf, indent=2)
 
