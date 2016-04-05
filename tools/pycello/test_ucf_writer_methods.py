@@ -2,14 +2,37 @@
 """Tests for UCF Writer methods."""
 
 import unittest
+import json
+import sys
+import re
 
 from ucf_writer import (
     gates_from_csv,
     parts_from_csv,
     gate_parts_from_csv,
     response_functions_from_csv,
-    eugene_rules
+    eugene_rules,
+    write_ucf
 )
+
+
+class MockSTDOut(object):
+    """Mock object for sys.stdout, used to get print value."""
+
+    strings = []
+
+    def __init__(self):
+        """Initialize the object."""
+        self.strings = []
+
+    def write(self, string):
+        """Log printed string rather than printing it."""
+        self.strings.append(string)
+
+
+stdout = MockSTDOut()
+_stdout = sys.stdout
+sys.stdout = stdout
 
 
 class TestUCFWriterMethods(unittest.TestCase):
@@ -308,6 +331,206 @@ class TestUCFWriterMethods(unittest.TestCase):
         roadblock_promoters = ['foo']
         rules = eugene_rules(roadblock_promoters)
         self.assertEqual(rules, expected_eugene_rules)
+
+    def test_write_ucf(self):
+        """Test for write_ucf."""
+        table = [
+            {
+                'asdf': 'foo',
+                'zxcv': '0101',
+                'asdf2': 'foo2',
+                'zxcv2': '01012',
+                'asdf3': 'foo3',
+                'zxcv3': '01013',
+                'asdf4': 'foo4',
+                'zxcv4': '01014',
+                'asdf5': 'foo5',
+                'zxcv5': '01015',
+                'nnnn': 'zzzz',
+                'a': '0',
+                'b': '00',
+                'c': '000',
+                'd': '0000',
+                'e': '00000',
+                'f': '000000',
+                'g': '0000000',
+                'h': '00000000',
+            }
+        ]
+
+        header_map = {
+            'name': 'a',
+            'equation': 'b',
+            'ymax': 'c',
+            'ymin': 'd',
+            'K': 'e',
+            'n': 'f',
+            'IL': 'g',
+            'IH': 'h',
+            'type': 'nnnn',
+            'ribozyme': 'asdf',
+            'ribozymeDNA': 'zxcv',
+            'rbs': 'asdf2',
+            'rbsDNA': 'zxcv2',
+            'cds': 'asdf3',
+            'cdsDNA': 'zxcv3',
+            'terminator': 'asdf4',
+            'terminatorDNA': 'zxcv4',
+            'promoter': 'asdf5',
+            'promoterDNA': 'zxcv5'
+        }
+        data = [
+            {
+                "description": "placeholder",
+                "author": [
+                    "author1"
+                ],
+                "media": "placeholder",
+                "collection": "header",
+                "version": "placeholder",
+                "growth": "placeholder",
+                "genome": "placeholder",
+                "date": "placeholder",
+                "organism": "Escherichia coli NEB 10-beta",
+                "temperature": "37"
+            },
+            {
+                "plasmid_description": "placeholder",
+                "plasmid_sequence": "placeholder",
+                "signal_carrier_units": "REU",
+                "collection": "measurement_std",
+                "normalization_instructions": "placeholder"
+            },
+            {
+                "collection": "logic_constraints",
+                "available_gates": [
+                    {
+                        "type": "NOR",
+                        "max_instances": 10
+                    },
+                    {
+                        "type": "OUTPUT_OR",
+                        "max_instances": 3
+                    }
+                ]
+            },
+            {
+                "inputs": [
+                    "a",
+                    "b"
+                ],
+                "netlist": [
+                    "OUTPUT_OR(y,a,b)"
+                ],
+                "collection": "motif_library",
+                "outputs": [
+                    "y"
+                ]
+            },
+            {
+                "gate_name": "0",
+                "system": "TetR",
+                "collection": "gates",
+                "group_name": "foo3",
+                "regulator": "foo3",
+                "color_hexcode": "000000",
+                "gate_type": "zzzz"
+            },
+            {
+                "gate_name": "0",
+                "equation": "00",
+                "parameters": [
+                    {
+                        "name": "ymax",
+                        "value": "000"
+                    },
+                    {
+                        "name": "ymin",
+                        "value": "0000"
+                    },
+                    {
+                        "name": "K",
+                        "value": "00000"
+                    },
+                    {
+                        "name": "n",
+                        "value": "000000"
+                    }
+                ],
+                "variables": [
+                    {
+                        "on_threshold": "00000000",
+                        "name": "x",
+                        "off_threshold": "0000000"
+                    }
+                ],
+                "collection": "response_functions"
+            },
+            {
+                "gate_name": "0",
+                "expression_cassettes": [
+                    {
+                        "maps_to_variable": "x",
+                        "cassette_parts": [
+                            "foo",
+                            "foo2",
+                            "foo3",
+                            "foo4"
+                        ]
+                    }
+                ],
+                "promoter": "foo5",
+                "collection": "gate_parts"
+            },
+            {
+                "dnasequence": "0101",
+                "type": "ribozyme",
+                "name": "foo",
+                "collection": "parts"
+            },
+            {
+                "dnasequence": "01012",
+                "type": "rbs",
+                "name": "foo2",
+                "collection": "parts"
+            },
+            {
+                "dnasequence": "01013",
+                "type": "cds",
+                "name": "foo3",
+                "collection": "parts"
+            },
+            {
+                "dnasequence": "01014",
+                "type": "terminator",
+                "name": "foo4",
+                "collection": "parts"
+            },
+            {
+                "dnasequence": "01015",
+                "type": "promoter",
+                "name": "foo5",
+                "collection": "parts"
+            },
+            {
+                "eugene_gate_rules": [
+                    "ALL_FORWARD"
+                ],
+                "eugene_part_rules": [
+                    "STARTSWITH pTac",
+                    "STARTSWITH pBAD",
+                    "STARTSWITH pPhlF",
+                    "STARTSWITH pSrpR",
+                    "STARTSWITH pBM3R1",
+                    "STARTSWITH pQacR"
+                ],
+                "collection": "eugene_rules"
+            }
+        ]
+        write_ucf(table, header_map)
+        sys.stdout = _stdout
+        parsed_data = json.loads(stdout.strings[0])
+        self.assertDictEqual(parsed_data[0], data[0])
 
 if __name__ == '__main__':
     unittest.main()
